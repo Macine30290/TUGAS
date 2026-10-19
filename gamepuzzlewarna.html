@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Puzzle Antariksa Bentuk & Warna</title>
+  <!-- Google Font Ceria & Bintang -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.85);
+      --primary: #818cf8;
+      --accent: #fbbf24;
+      --text: #f8fafc;
+      --shadow: 0 12px 32px rgba(0,0,0,0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Fredoka', 'Segoe UI', sans-serif;
+      background-color: var(--bg-color);
+      /* Background Tema Antariksa Lucu & Bintang */
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 40px 70px, #ffd700, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 80px 120px, #ff7675, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 150px 40px, #ffffff, rgba(0,0,0,0)),
+        radial-gradient(3px 3px at 220px 90px, #74b9ff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 280px 150px, #ffffff, rgba(0,0,0,0));
+      background-size: 300px 200px;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      color: #38bdf8;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.6), 2px 2px 0px #1e1b4b;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    /* Pilihan Mode Switch & Jarak Tombol */
+    .mode-switch {
+      display: flex;
+      gap: 20px;
+      margin-top: 18px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn {
+      background: #1e293b;
+      color: #38bdf8;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 3px solid #38bdf8;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.2);
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .mode-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .mode-btn.active {
+      background: #38bdf8;
+      color: #0f172a;
+      border-color: #38bdf8;
+      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.5);
+    }
+
+    .bgm-btn {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .bgm-btn.active-bgm {
+      background: #059669;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.7);
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: 30px;
+      margin-top: 20px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: rgba(30, 41, 59, 0.9);
+      padding: 12px 30px;
+      border-radius: 30px;
+      border: 3px solid #818cf8;
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.3);
+      justify-content: center;
+    }
+
+    /* Container Utama Memenuhi Layar dengan Rapi */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      width: 100%;
+      max-width: 1000px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 32px;
+      border: 3px solid rgba(129, 140, 248, 0.4);
+      box-shadow: var(--shadow);
+    }
+
+    @media (min-width: 768px) {
+      .game-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: stretch;
+      }
+    }
+
+    .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.6);
+      padding: 24px;
+      border-radius: 24px;
+      border: 3px dashed #475569;
+      min-height: 420px;
+    }
+
+    .panel-title {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(30, 41, 59, 0.8);
+      padding: 8px 24px;
+      border-radius: 20px;
+      border: 2px solid #fbbf24;
+    }
+
+    /* Layout Grid yang Mengisi & Pas dengan Panel Luar */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      height: 100%;
+      align-items: stretch;
+      justify-items: stretch;
+    }
+
+    @media (min-width: 480px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .shape-svg {
+      width: 80%;
+      height: 80%;
+      max-width: 75px;
+      max-height: 75px;
+      transition: transform 0.25s ease;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+
+    .text-card {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #f8fafc;
+      text-align: center;
+    }
+
+    /* Draggable Items & Target Slots yang Mengisi Area Luar (Pas/Flex) */
+    .draggable-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      min-height: 95px;
+      border-radius: 20px;
+      background: #1e293b;
+      border: 3px solid #475569;
+      box-shadow: 0 6px 0 #0f172a;
+      transition: all 0.2s ease;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .draggable-item:active {
+      cursor: grabbing;
+    }
+
+    .draggable-item:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
+      box-shadow: 0 8px 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .draggable-item.selected {
+      border: 4px solid #38bdf8;
+      background: #0f172a;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+    }
+
+    .draggable-item.matched {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .target-slot {
+      width: 100%;
+      height: 100%;
+      min-height: 95px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 20px;
+      background: rgba(30, 41, 59, 0.5);
+      border: 3px dashed #475569;
+      position: relative;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .target-slot.color-swatch {
+      border: 4px solid #475569;
+    }
+
+    .target-slot.hovered {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: #38bdf8;
+      transform: scale(1.04);
+    }
+
+    .target-slot.filled {
+      border: 3px solid #10b981;
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .target-slot .target-shape-svg {
+      width: 80%;
+      height: 80%;
+      max-width: 75px;
+      max-height: 75px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.25;
+      filter: grayscale(100%);
+    }
+
+    .target-slot.filled .target-shape-svg {
+      opacity: 1;
+      filter: none;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .target-slot.filled .text-card {
+      color: #ffffff;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.3) rotate(-10deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    .controls {
+      margin-top: 25px;
+      display: flex;
+      gap: 15px;
+    }
+
+    button.btn-action {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #4338ca;
+      transition: all 0.2s;
+    }
+
+    button.btn-action:hover {
+      background-color: #6366f1;
+      transform: translateY(-2px);
+    }
+
+    button.btn-action:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #4338ca;
+    }
+
+    /* Modal Kemenangan */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: #1e293b;
+      padding: 40px;
+      border-radius: 32px;
+      border: 4px solid #fbbf24;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      transform: scale(0.8);
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal h2 {
+      font-size: 2.2rem;
+      color: #fbbf24;
+      margin-bottom: 12px;
+    }
+
+    .modal p {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🚀 MENEGENAL BENTUK DAN WARNA 🚀</h1>
+    <p class="subtitle" id="subtitle-text">Tarik bentuk dan warna ke tempat yang sesuai!</p>
+
+    <div class="mode-switch">
+      <button class="mode-btn active" id="mode-shapes">🔷 Mode Bentuk</button>
+      <button class="mode-btn" id="mode-colors">🎨 Mode Warna & Teks</button>
+      <button class="mode-btn bgm-btn" id="bgm-toggle">🎵 Musik: OFF</button>
+    </div>
+
+    <div class="stats-bar">
+      <div>Skor: <span id="score">0</span> / 6</div>
+      <div>Waktu: <span id="timer">0</span>s</div>
+    </div>
+  </header>
+
+  <main class="game-container">
+    <div class="panel">
+      <div class="panel-title" id="source-title">Bentuk</div>
+      <div class="grid" id="source-grid"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title" id="target-title">Cocokkan Di Sini</div>
+      <div class="grid" id="target-grid"></div>
+    </div>
+  </main>
+
+  <div class="controls">
+    <button class="btn-action" id="reset-btn">🔄 Mulai Ulang</button>
+  </div>
+
+  <div class="modal-overlay" id="win-modal">
+    <div class="modal">
+      <h2>🎉 Luar Biasa! 🎉</h2>
+      <p>Kamu berhasil mencocokkan semua kartu antariksa dengan sempurna!</p>
+      <button class="btn-action" id="play-again-btn">🎮 Main Lagi</button>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <script>
+    // --- Data Mode 1: 6 Bentuk Geometri ---
+    const SHAPES_DATA = [
+      {
+        id: 'circle-red',
+        color: '#ff7675',
+        name: 'Lingkaran Merah',
+        svg: `<svg viewBox="0 0 100 100" class="shape-svg"><circle cx="50" cy="50" r="40" fill="#ff7675" /></svg>`
+      },
+      {
+        id: 'square-blue',
+        color: '#74b9ff',
+        name: 'Persegi Biru',
+        svg: `<svg viewBox="0 0 100 100" class="shape-svg"><rect x="15" y="15" width="70" height="70" rx="12" fill="#74b9ff" /></svg>`
+      },
+      {
+        id: 'triangle-green',
+        color: '#55efc4',
+        name: 'Segitiga Hijau',
+        svg: `<svg viewBox="0 0 100 100" class="shape-svg"><polygon points="50,15 88,80 12,80" fill="#55efc4" stroke-linejoin="round" stroke-width="8" stroke="#55efc4" /></svg>`
+      },
+      {
+        id: 'star-yellow',
+        color: '#fdcb6e',
+        name: 'Bintang Kuning',
+        svg: `<svg viewBox="0 0 100 100" class="shape-svg"><polygon points="50,10 63,38 93,38 68,56 78,86 50,68 22,86 32,56 7,38 37,38" fill="#fdcb6e" stroke-linejoin="round" stroke-width="4" stroke="#fdcb6e" /></svg>`
+      },
+      {
+        id: 'heart-purple',
+        color: '#a29bfe',
+        name: 'Hati Ungu',
+        svg: `<svg viewBox="0 0 100 100" class="shape-svg"><path d="M50,88 C20,60 5,40 18,20 C30,2 45,15 50,25 C55,15 70,2 82,20 C95,40 80,60 50,88 Z" fill="#a29bfe" /></svg>`
+      },
+      {
+        id: 'moon-orange',
+        color: '#e17055',
+        name: 'Bulan Oranye',
+        svg: `<svg viewBox="0 0 100 100" class="shape-svg"><path d="M50,10 A40,40 0 1,0 90,50 A30,30 0 1,1 50,10 Z" fill="#e17055" /></svg>`
+      }
+    ];
+
+    // --- Data Mode 2: 6 Warna & Teks ---
+    const COLORS_DATA = [
+      { id: 'color-merah', name: 'MERAH', color: '#ff0000' },
+      { id: 'color-biru', name: 'BIRU', color: '#0000ff' },
+      { id: 'color-hijau', name: 'HIJAU', color: '#008000' },
+      { id: 'color-kuning', name: 'KUNING', color: '#ffff00' },
+      { id: 'color-ungu', name: 'UNGU', color: '#800080' },
+      { id: 'color-jingga', name: 'JINGGA', color: '#ffa500' }
+    ];
+
+    let currentMode = 'shapes';
+    let score = 0;
+    let timer = 0;
+    let timerInterval = null;
+    let selectedSourceId = null;
+
+    const sourceGrid = document.getElementById('source-grid');
+    const targetGrid = document.getElementById('target-grid');
+    const scoreEl = document.getElementById('score');
+    const timerEl = document.getElementById('timer');
+    const resetBtn = document.getElementById('reset-btn');
+    const winModal = document.getElementById('win-modal');
+    const playAgainBtn = document.getElementById('play-again-btn');
+
+    const modeShapesBtn = document.getElementById('mode-shapes');
+    const modeColorsBtn = document.getElementById('mode-colors');
+    const bgmToggleBtn = document.getElementById('bgm-toggle');
+    const subtitleText = document.getElementById('subtitle-text');
+    const sourceTitle = document.getElementById('source-title');
+    const targetTitle = document.getElementById('target-title');
+
+    // --- Audio Synthesizer (Web Audio API) ---
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+    let isBgmPlaying = false;
+    let bgmTimer = null;
+    let bgmStep = 0;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+    }
+
+    // Melodi BGM Antariksa Ceria dengan Volume Lebih Keras & Jelas
+    const bgmNotes = [
+      261.63, 329.63, 392.00, 523.25, 392.00, 329.63,
+      293.66, 349.23, 440.00, 523.25, 440.00, 349.23,
+      329.63, 392.00, 493.88, 587.33, 493.88, 392.00,
+      523.25, 392.00, 329.63, 261.63
+    ];
+
+    function toggleBGM() {
+      initAudio();
+      if (isBgmPlaying) {
+        stopBGM();
+      } else {
+        startBGM();
+      }
+    }
+
+    function startBGM() {
+      isBgmPlaying = true;
+      bgmToggleBtn.textContent = '🎵 Musik: ON';
+      bgmToggleBtn.classList.add('active-bgm');
+      bgmStep = 0;
+      playBgmStep();
+      bgmTimer = setInterval(playBgmStep, 260);
+    }
+
+    function stopBGM() {
+      isBgmPlaying = false;
+      bgmToggleBtn.textContent = '🎵 Musik: OFF';
+      bgmToggleBtn.classList.remove('active-bgm');
+      if (bgmTimer) clearInterval(bgmTimer);
+    }
+
+    function playBgmStep() {
+      if (!audioCtx || !isBgmPlaying) return;
+      const freq = bgmNotes[bgmStep % bgmNotes.length];
+      bgmStep++;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle'; // Suara lebih penuh dan lantang
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+      // Volume BGM Ditingkatkan menjadi 0.15 (Lebih keras & pas)
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.24);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.25);
+    }
+
+    function playSound(type) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'success') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+        osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+      } else if (type === 'win') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.setValueAtTime(554.37, now + 0.15);
+        osc.frequency.setValueAtTime(659.25, now + 0.3);
+        osc.frequency.setValueAtTime(880, now + 0.45);
+        gain.gain.setValueAtTime(0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+        osc.start(now);
+        osc.stop(now + 0.8);
+      } else if (type === 'error') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }
+    }
+
+    function initGame() {
+      score = 0;
+      timer = 0;
+      selectedSourceId = null;
+      scoreEl.textContent = score;
+      timerEl.textContent = timer;
+      winModal.classList.remove('active');
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timer++;
+        timerEl.textContent = timer;
+      }, 1000);
+
+      sourceGrid.innerHTML = '';
+      targetGrid.innerHTML = '';
+
+      if (currentMode === 'shapes') {
+        subtitleText.textContent = 'Tarik bentuk ke tempat yang sesuai!';
+        sourceTitle.textContent = 'Bentuk';
+        targetTitle.textContent = 'Cocokkan Di Sini';
+        setupShapesMode();
+      } else {
+        subtitleText.textContent = 'Cocokkan Nama Warna dengan Kotak Warna!';
+        sourceTitle.textContent = 'Nama Warna';
+        targetTitle.textContent = 'Kotak Warna';
+        setupColorsMode();
+      }
+    }
+
+    function setupShapesMode() {
+      const shuffledSource = [...SHAPES_DATA].sort(() => Math.random() - 0.5);
+      const shuffledTarget = [...SHAPES_DATA].sort(() => Math.random() - 0.5);
+
+      shuffledSource.forEach(item => {
+        const sourceItem = createDraggableElement(item.id, item.svg);
+        sourceGrid.appendChild(sourceItem);
+      });
+
+      shuffledTarget.forEach(item => {
+        const slot = createTargetSlotElement(item.id, `<div class="target-shape-svg">${item.svg}</div>`);
+        targetGrid.appendChild(slot);
+      });
+    }
+
+    function setupColorsMode() {
+      const shuffledSource = [...COLORS_DATA].sort(() => Math.random() - 0.5);
+      const shuffledTarget = [...COLORS_DATA].sort(() => Math.random() - 0.5);
+
+      shuffledSource.forEach(item => {
+        const htmlContent = `<div class="text-card">${item.name}</div>`;
+        const sourceItem = createDraggableElement(item.id, htmlContent);
+        sourceGrid.appendChild(sourceItem);
+      });
+
+      shuffledTarget.forEach(item => {
+        const slot = createTargetSlotElement(item.id, '');
+        slot.classList.add('color-swatch');
+        slot.style.backgroundColor = item.color;
+        targetGrid.appendChild(slot);
+      });
+    }
+
+    function createDraggableElement(id, innerHTML) {
+      const item = document.createElement('div');
+      item.className = 'draggable-item';
+      item.dataset.id = id;
+      item.innerHTML = innerHTML;
+      item.setAttribute('draggable', 'true');
+
+      item.addEventListener('dragstart', handleDragStart);
+      item.addEventListener('dragend', handleDragEnd);
+      item.addEventListener('click', () => handleSourceClick(item));
+
+      return item;
+    }
+
+    function createTargetSlotElement(id, innerHTML) {
+      const slot = document.createElement('div');
+      slot.className = 'target-slot';
+      slot.dataset.id = id;
+      slot.innerHTML = innerHTML;
+
+      slot.addEventListener('dragover', handleDragOver);
+      slot.addEventListener('dragenter', handleDragEnter);
+      slot.addEventListener('dragleave', handleDragLeave);
+      slot.addEventListener('drop', handleDrop);
+      slot.addEventListener('click', () => handleTargetClick(slot));
+
+      return slot;
+    }
+
+    function handleDragStart(e) {
+      initAudio();
+      e.dataTransfer.setData('text/plain', e.target.dataset.id || e.target.parentElement.dataset.id);
+      setTimeout(() => e.target.classList.add('dragging'), 0);
+    }
+
+    function handleDragEnd(e) {
+      e.target.classList.remove('dragging');
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+    }
+
+    function handleDragEnter(e) {
+      e.preventDefault();
+      const slot = e.target.closest('.target-slot');
+      if (slot && !slot.classList.contains('filled')) {
+        slot.classList.add('hovered');
+      }
+    }
+
+    function handleDragLeave(e) {
+      const slot = e.target.closest('.target-slot');
+      if (slot) {
+        slot.classList.remove('hovered');
+      }
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      const slot = e.target.closest('.target-slot');
+      if (!slot) return;
+      
+      slot.classList.remove('hovered');
+      const draggedId = e.dataTransfer.getData('text/plain');
+
+      checkMatch(draggedId, slot);
+    }
+
+    function handleSourceClick(item) {
+      initAudio();
+      if (item.classList.contains('matched')) return;
+
+      document.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('selected'));
+
+      if (selectedSourceId === item.dataset.id) {
+        selectedSourceId = null;
+      } else {
+        selectedSourceId = item.dataset.id;
+        item.classList.add('selected');
+      }
+    }
+
+    function handleTargetClick(slot) {
+      if (!selectedSourceId || slot.classList.contains('filled')) return;
+      checkMatch(selectedSourceId, slot);
+    }
+
+    function checkMatch(sourceId, targetSlot) {
+      const targetId = targetSlot.dataset.id;
+
+      if (sourceId === targetId) {
+        playSound('success');
+
+        targetSlot.classList.add('filled');
+
+        if (currentMode === 'shapes') {
+          const shapeObj = SHAPES_DATA.find(s => s.id === sourceId);
+          targetSlot.innerHTML = shapeObj.svg;
+        } else {
+          const colorObj = COLORS_DATA.find(c => c.id === sourceId);
+          targetSlot.innerHTML = `<div class="text-card">${colorObj.name}</div>`;
+        }
+
+        const sourceItem = sourceGrid.querySelector(`[data-id="${sourceId}"]`);
+        if (sourceItem) {
+          sourceItem.classList.add('matched');
+          sourceItem.classList.remove('selected');
+        }
+
+        selectedSourceId = null;
+        score++;
+        scoreEl.textContent = score;
+
+        if (score === 6) {
+          handleWin();
+        }
+      } else {
+        playSound('error');
+        targetSlot.style.transform = 'translateX(8px)';
+        setTimeout(() => targetSlot.style.transform = 'translateX(-8px)', 60);
+        setTimeout(() => targetSlot.style.transform = 'translateX(0)', 120);
+      }
+    }
+
+    function handleWin() {
+      clearInterval(timerInterval);
+      setTimeout(() => {
+        playSound('win');
+        winModal.classList.add('active');
+        triggerConfetti();
+      }, 300);
+    }
+
+    function triggerConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#ff7675', '#74b9ff', '#55efc4', '#fdcb6e', '#a29bfe', '#e17055'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 14,
+          size: Math.random() * 10 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          gravity: 0.2,
+          alpha: 1
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.alpha -= 0.015;
+
+          if (p.alpha > 0) {
+            active = true;
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.fillRect(p.x, p.y, p.size, p.size);
+          }
+        });
+
+        if (active) requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    modeShapesBtn.addEventListener('click', () => {
+      if (currentMode === 'shapes') return;
+      currentMode = 'shapes';
+      modeShapesBtn.classList.add('active');
+      modeColorsBtn.classList.remove('active');
+      initAudio();
+      initGame();
+    });
+
+    modeColorsBtn.addEventListener('click', () => {
+      if (currentMode === 'colors') return;
+      currentMode = 'colors';
+      modeColorsBtn.classList.add('active');
+      modeShapesBtn.classList.remove('active');
+      initAudio();
+      initGame();
+    });
+
+    bgmToggleBtn.addEventListener('click', toggleBGM);
+
+    resetBtn.addEventListener('click', () => {
+      initAudio();
+      initGame();
+    });
+
+    playAgainBtn.addEventListener('click', () => {
+      initAudio();
+      initGame();
+    });
+
+    window.addEventListener('resize', () => {
+      const canvas = document.getElementById('confetti-canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    initGame();
+  </script>
+</body>
+</html>
